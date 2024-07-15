@@ -68,26 +68,26 @@ const getOriginalURL = async (req, res) => {
         const locationDetails = await getLocationDetails();
 
         // Check if the URL is saved by an authenticated user
-        // if (data && data.savedBy) {
-        const newAnalytics = await Analytics.create({
-            shortId,
-            browser: browserDetails.browser, // Example: Extract browser from request headers
-            os: browserDetails.os, // Example: Extract OS information
-            city: locationDetails.city,
-            country: locationDetails.country_name,
-            accessedAt: new Date(),
-        });
+        if (data && data.savedBy) {
+            const newAnalytics = await Analytics.create({
+                shortId,
+                browser: browserDetails.browser, // Example: Extract browser from request headers
+                os: browserDetails.os, // Example: Extract OS information
+                city: locationDetails.city,
+                country: locationDetails.country_name,
+                accessedAt: new Date(),
+            });
 
-        // Update the URL document with the new analytics ID
-        await URL.updateOne(
-            {shortId},
-            {
-                $push: {
-                    analytics: newAnalytics._id,
-                },
-            }
-        );
-        // }
+            // Update the URL document with the new analytics ID
+            await URL.updateOne(
+                {shortId},
+                {
+                    $push: {
+                        analytics: newAnalytics._id,
+                    },
+                }
+            );
+        }
 
         // return await res.redirect(data.originalUrl);
         return res.json({

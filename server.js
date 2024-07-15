@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 
 const linkRouter = require("./routes/LinkRoute");
 const analyticsRouter = require("./routes/AnalyticsRoute");
+const apiRouter = require("./routes/API-Route");
 
 const connectDB = require("./database");
 connectDB();
@@ -37,6 +38,7 @@ app.use(
     })
 );
 
+app.use("/api/service/v1", apiRouter);
 app.use("/api/v1", linkRouter);
 app.use("/api/v1", analyticsRouter);
 
