@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const URL = require("../models/LinkModel");
 const Analytics = require("../models/AnalyticsModel");
 
@@ -123,6 +125,20 @@ const saveURL = async (req, res) => {
 
         // Clerk middleware attaches userId to req.auth.userId
         const token = authToken.split(" ")[1]; // Extract token
+
+        const data = jwt.decode(token);
+        const clerkId = data.sub;
+        console.log(data.sub);
+
+        const user = await URL.findOneAndUpdate(
+            {shortId},
+            {
+                linkName,
+                savedBy: clerkId,
+            }
+        );
+
+        console.log(user);
 
         return res.status(200).json({
             success: true,

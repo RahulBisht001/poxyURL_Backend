@@ -20,8 +20,7 @@ const UrlSchema = new mongoose.Schema(
             default: "Untitled Link",
         },
         savedBy: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            type: String,
         },
 
         analytics: [
