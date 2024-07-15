@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 5000;
 //?   CORS option
 
 const corsOptions = {
-    origin: process.env.FRONTEND_URL,
+    origin: "https://poxyurl.in",
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     optionSuccessStatus: 200,
