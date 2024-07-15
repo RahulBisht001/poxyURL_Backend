@@ -1,4 +1,6 @@
-/node_modules
-
 # local env files
+# dotenv environment variable files
+
 .env
+
+/node_modules
