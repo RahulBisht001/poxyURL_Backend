@@ -1,5 +1,3 @@
-const {decodeJwt} = require("@clerk/backend/jwt");
-
 const URL = require("../models/LinkModel");
 const Analytics = require("../models/AnalyticsModel");
 
