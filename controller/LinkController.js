@@ -5,6 +5,13 @@ const Analytics = require("../models/AnalyticsModel");
 
 const {getBrowserDetails, getLocationDetails} = require("../utils/analytics");
 
+/**
+ * This controller is used to generate a shortId for
+ * given original URL.
+ * This shortId and associated original URL are saved in the
+ * Database so that when access the link from
+ * shortId then the original url can be fetched from db
+ */
 const generateShortURL = async (req, res) => {
     try {
         console.log(req.body);
@@ -152,13 +159,30 @@ const saveURL = async (req, res) => {
 
 const getAllLinks = async (req, res) => {
     try {
-        const data = await URL.find({});
+        const authToken = req.headers.authorization;
 
-        console.log(data);
+        // Validate authToken (example code, replace with your actual validation)
+        if (!authToken || !authToken.startsWith("Bearer ")) {
+            return res.status(401).json({
+                success: false,
+                error: "Unauthorized",
+            });
+        }
+
+        // Clerk middleware attaches userId to req.auth.userId
+        const token = authToken.split(" ")[1]; // Extract token
+
+        const data = jwt.decode(token);
+        const clerkId = data.sub;
+        console.log(data.sub);
+
+        const urls = await URL.find({savedBy: clerkId});
+
+        console.log(urls);
 
         res.status(200).json({
             success: true,
-            data,
+            urls,
         });
     } catch (error) {
         console.log(error);
@@ -170,15 +194,40 @@ const deleteLink = async (req, res) => {
     try {
         const {shortId} = req.params;
 
+        const authToken = req.headers.authorization;
+
+        // Validate authToken (example code, replace with your actual validation)
+        if (!authToken || !authToken.startsWith("Bearer ")) {
+            return res.status(401).json({
+                success: false,
+                error: "Unauthorized",
+            });
+        }
+
+        // Clerk middleware attaches userId to req.auth.userId
+        const token = authToken.split(" ")[1]; // Extract user ui from token
+
+        const data = jwt.decode(token);
+        const clerkId = data.sub;
+
         // not just that you also need to delete
         // all the analytics related with this link
 
-        // currently it is not available but
-        // actually we have to delete link based on shortId and user detail
+        // Optionally, delete related analytics
+        // await Analytics.deleteMany({ shortId });
 
-        await URL.findOneAndDelete({
+        // Delete the link if it exists and is associated with the logged-in user
+        const url = await URL.findOneAndDelete({
             shortId,
+            savedBy: clerkId,
         });
+
+        if (!url) {
+            return res.status(404).json({
+                success: false,
+                message: "Link not found or you are not authorized to delete this link",
+            });
+        }
 
         res.status(200).json({
             success: true,
