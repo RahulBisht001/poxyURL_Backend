@@ -11,6 +11,9 @@ const AnalyticsSchema = new mongoose.Schema({
     os: {
         type: String,
     },
+    device: {
+        type: String,
+    },
     city: {
         type: String,
     },

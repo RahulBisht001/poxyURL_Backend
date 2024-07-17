@@ -70,19 +70,24 @@ const getOriginalURL = async (req, res) => {
 
         const data = await URL.findOne({shortId: shortId});
 
-        const {"user-agent": userAgent, referer: referrer} = req.headers;
+        const userAgentInfo = req.headers["useragentinfo"];
+        // console.log(JSON.parse(userAgentInfo));
 
-        // create analytics
-        const browserDetails = getBrowserDetails(userAgent);
+        const info = JSON.parse(userAgentInfo);
+
+        // const browserDetails = getBrowserDetails(userAgent);
+        // console.log(browserDetails);
         const locationDetails = await getLocationDetails();
+        console.log(locationDetails);
 
         // Check if the URL is saved by an authenticated user
         if (data && data.savedBy) {
             const newAnalytics = await Analytics.create({
                 shortId,
-                browser: browserDetails.browser, // Example: Extract browser from request headers
-                os: browserDetails.os, // Example: Extract OS information
-                city: locationDetails.city,
+                browser: info?.browser?.name || "Other",
+                os: info?.os?.name || "Other",
+                device: info?.device?.type || "desktop",
+                city: locationDetails?.city,
                 country: locationDetails.country_name,
                 accessedAt: new Date(),
             });
