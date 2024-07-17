@@ -11,7 +11,7 @@ const {
 } = require("../controller/LinkController");
 
 linkRouter.post("/shorten", generateShortURL);
-linkRouter.get("/:shortId", getOriginalURL);
+linkRouter.get("/id/:shortId", getOriginalURL);
 linkRouter.post("/saveUrl", saveURL);
 linkRouter.get("/links/all", getAllLinks);
 linkRouter.get("/link/:shortId", getLinkAnalytics);
